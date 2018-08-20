@@ -1,16 +1,8 @@
-// First thing: setcounter
-var shuffleSequence = seq("setcounter", randomize("rating"), randomize("input"));
+var shuffleSequence = seq(randomize("rating"), randomize("input"));
 PennController.ResetPrefix(null);
 
-var items = [
-
-    // The counter is incremented when this is executed
-    ["setcounter", "__SetCounter__", { }]
-    
-];
-
-PennController.FeedItems( PennController.GetTable("design.csv").filter("Label","rating") ,
-    (item) => PennController(
+PennController.FeedItems( PennController.GetTable("ratings.csv") ,
+    item => PennController(
         newText("A's line", item.A)
             .print()
         ,
@@ -35,15 +27,10 @@ PennController.FeedItems( PennController.GetTable("design.csv").filter("Label","
             .print()
             .wait()
     )
-    // We save ID, Label, Item and Group
-        .logAppend( "ID" , PennController.GetURLParameter("id") )
-        .logAppend( "Label" , item.Label )
-        .logAppend( "Item"  , item.Item  )
-        .logAppend( "Group" , item.Group )
 );
 
-PennController.FeedItems( PennController.GetTable("design.csv").filter("Label","input") ,
-        (item) => PennController(
+PennController.FeedItems( PennController.GetTable("inputs.csv") ,
+    item => PennController(
         newText("warning input", "Please enter some text before validating")
             .settings.bold()
             .settings.italic()
@@ -55,7 +42,7 @@ PennController.FeedItems( PennController.GetTable("design.csv").filter("Label","
         ,
         newTextInput("alternative")
             .settings.log() // We want to collect data here
-            .settings.before(item.Sentence+" ") // Just adding a space character
+            .settings.before( newText("before", item.Sentence) )
             .print()
         ,
         newButton("validate input", "Click here to validate")
@@ -67,9 +54,4 @@ PennController.FeedItems( PennController.GetTable("design.csv").filter("Label","
                     .failure( getText("warning input").print() )
             )
     )
-    // Note that 'logAppend' relates to 'PennController' above (to the right of '=>')
-        .logAppend( "ID" , PennController.GetURLParameter("id") )
-        .logAppend( "Label" , item.Label )
-        .logAppend( "Item"  , item.Item  )
-        .logAppend( "Group" , item.Group )
 );
